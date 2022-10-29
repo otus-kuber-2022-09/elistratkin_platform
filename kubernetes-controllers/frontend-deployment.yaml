@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: paymentservice
+  name: frontend
   labels:
-    app: paymentservice
+    app: frontend
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: paymentservice
+      app: frontend
   template:
     metadata:
       labels:
-        app: paymentservice
+        app: frontend
     spec:
       containers:
       - name: server
-        image: avtandilko/hipster-frontend:v0.0.2
+        image: avtandilko/hipster-frontend:v0.0.1
         env:
           - name: PORT
             value: "8080"
@@ -35,11 +35,6 @@ spec:
           - name: AD_SERVICE_ADDR
             value: "adservice:9555"
         readinessProbe:
-          initialDelaySeconds: 10
-          httpGet:
-            path: "/_healthz"
-            port: 8080
-        livenessProbe:
           initialDelaySeconds: 10
           httpGet:
             path: "/_healthz"
