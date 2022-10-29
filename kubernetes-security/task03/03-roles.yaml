@@ -18,4 +18,4 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["*"]
-    verbs: ["get","wathc","list"]
+    verbs: ["get","watch","list"]

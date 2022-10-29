@@ -8,7 +8,7 @@ roleRef:
   kind: Role
   name: admin
 subjects:
-  - kind: ServiceAccount
+  - kind: User
     name: jane
     namespace: dev
 
@@ -22,6 +22,6 @@ roleRef:
   kind: Role
   name: view
 subjects:
-  - kind: ServiceAccount
+  - kind: User
     name: ken
     namespace: dev
