@@ -8,7 +8,7 @@ roleRef:
   kind: Role
   name: admin
 subjects:
-  - kind: User
+  - kind: ServiceAccount
     name: jane
     namespace: dev
 
@@ -16,12 +16,12 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: ken-admin
+  name: ken-viewer
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: view
 subjects:
-  - kind: User
+  - kind: ServiceAccount
     name: ken
     namespace: dev
