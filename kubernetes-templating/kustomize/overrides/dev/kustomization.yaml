@@ -1,7 +1,7 @@
 commonLabels:
   environment: dev
 resources:
-  - recommendationservice-deployment.yaml
-  - recommendationservice-service.yaml
+  - emailservice-deployment.yaml
+  - emailservice-service.yaml
 namePrefix: dev-
 namespace: hipster-shop
