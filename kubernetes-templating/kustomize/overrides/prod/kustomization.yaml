@@ -1,0 +1,7 @@
+commonLabels:
+  environment: prod
+resources:
+  - recommendationservice-deployment.yaml
+  - recommendationservice-service.yaml
+namePrefix: prod-
+namespace: hipster-shop-prod
