@@ -1,0 +1,29 @@
+ingress:
+  enabled: true
+  path: /
+  hosts:
+    - kibana.84.252.141.6.nip.io
+
+tolerations:
+  - key: node-role
+    operator: Equal
+    value: infra
+    effect: NoSchedule
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - kibana-kibana
+        topologyKey: kubernetes.io/hostname
+
+nodeSelector:
+  yandex.cloud/node-group-id: catp7hrcrg3r9jv10539
+
+image: elastic/kibana
