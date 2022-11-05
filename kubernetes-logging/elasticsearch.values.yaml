@@ -1,0 +1,10 @@
+tolerations:
+  - key: node-role
+    operator: Equal
+    value: infra
+    effect: NoSchedule
+
+nodeSelector:
+  yandex.cloud/node-group-id: catp7hrcrg3r9jv10539
+
+image: elastic/elasticsearch
