@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-app
+  namespace: front
+  labels:
+    k8s-app: front-app
+spec:
+  type: ClusterIP
+  ports:
+    {{ range $i := until 3 }}
+    - port: 8{{$i}}
+      targetPort: 8{{$i}}
+      protocol: TCP
+      name: http{{$i}}
+    {{- end }}
+  selector:
+    k8s-app: front-app
