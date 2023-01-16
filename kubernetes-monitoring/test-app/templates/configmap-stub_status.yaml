@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-extra-conf
+  namespace: front
+data:
+  stub.conf: |
+    server {
+      listen ${NGINX_PORT};
+      listen [::]:${NGINX_PORT};
+
+      location / {
+        default_type text/plain;
+        expires -1;
+        return 200 'Server address: $server_addr:$server_port\nServer name: $hostname\nDate: $time_local\nURI: $request_uri\nRequest ID: $request_id\n';
+      }
+
+      location = /basic_status {
+        stub_status;
+      }
+    }
+    

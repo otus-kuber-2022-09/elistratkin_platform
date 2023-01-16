@@ -1,3 +1,15 @@
+# ДЗ №07 Monitoring
+
+```
+cd kubernetes-monitoring/
+helm install test-app test-app/
+helm repo add nexclipper https://nexclipper.github.io/helm-charts
+
+for i in {0..2}; do helm install nginx-exporter$i nexclipper/nginx-exporter --namespace front --set nginxServer="http://front-app.front.svc.cluster.local:8$i/basic_status"; sleep 10; done
+
+```
+
+
 # ДЗ №06 Templating
 
 Работы выполнялись в managed service for kubernetes 1.22 by yandex 

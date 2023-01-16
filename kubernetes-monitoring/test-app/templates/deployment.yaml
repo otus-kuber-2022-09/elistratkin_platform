@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-app
+  namespace: front
+spec:
+  selector:
+    matchLabels:
+      k8s-app: front-app
+  template:
+    metadata:
+      labels:
+        k8s-app: front-app
+    spec:
+      containers:
+      {{ range $i := until 3 }}
+      - name: nginx{{$i}}
+        image: nginx:1.23.1
+        imagePullPolicy: Always
+        env:
+          - name: NGINX_PORT
+            value: "8{{$i}}"
+        ports:
+          - name: web
+            containerPort: 8{{$i}}
+        volumeMounts:
+          - mountPath: /etc/nginx/templates/default.conf.template
+            name: nginx-extra-conf
+            subPath: stub.conf
+      {{- end }}
+      volumes:
+      - name: nginx-extra-conf
+        configMap:
+          name: nginx-extra-conf
+          items:
+            - key: stub.conf
+              path: stub.conf
