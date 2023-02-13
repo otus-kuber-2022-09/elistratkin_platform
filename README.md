@@ -1,5 +1,38 @@
-# ДЗ №11 Vault
-```
+# elistratkin_platform
+
+## ДЗ №12 Production cluster
+
+Создадим тестовые машины и установим туда kubernetes версии 1.24.0
+
+![Тестовые машины](./kubernetes-production-cluster/test-machines.png)
+
+Проверяем, что кластер поднялся
+
+![Старый кластер](./kubernetes-production-cluster/old-cluster.png)
+
+Запускаем нагрузку на кластере
+
+![Запускаем нагрузку](./kubernetes-production-cluster/deployment-nginx.png)
+
+Обновляем мастер
+
+![Обновляем мастер](./kubernetes-production-cluster/update-master.png)
+
+Проверяем, что все компоненты мастера обновились
+
+![Обновляем мастер](./kubernetes-production-cluster/update-components.png)
+
+Обновляем воркеры, вешаем заразу на одну из воркер нод
+
+![Обновляем воркеры](./kubernetes-production-cluster/drain-nodes.png)
+
+Проверяем, что весь кластер обновился
+
+![Кластер готов](./kubernetes-production-cluster/new-cluster.png)
+
+## ДЗ №11 Vault
+
+```bash
 helm status vault
 ------------------
 NAME: vault
@@ -21,7 +54,8 @@ Your release is named vault. To learn more about the release, try:
   $ helm status vault
   $ helm get manifest vault
 ```
-```
+
+```bash
 kubectl exec -it vault-0 -- vault operator init -key-shares=1 -key-threshold=1
 
 Unseal Key 1: wyNh5oLbR49SeriBQy3pReQvvBxnBIdeEQeYMbpgsDA=
@@ -29,7 +63,7 @@ Unseal Key 1: wyNh5oLbR49SeriBQy3pReQvvBxnBIdeEQeYMbpgsDA=
 Initial Root Token: hvs.RZg0HPs1uA5q0R9ZDznEJe9b
 ```
 
-```
+```bash
 kubectl exec -it vault-0 -- vault status
 
 Seal Type       shamir
@@ -48,7 +82,7 @@ HA Mode         active
 Active Since    2023-01-28T17:41:27.766768321Z
 ```
 
-```
+```bash
 kubectl exec -it vault-0 -- vault login
 
 Success! You are now authenticated. The token information displayed below
@@ -66,7 +100,7 @@ identity_policies    []
 policies             ["root"]
 ```
 
-```
+```bash
 kubectl exec -it vault-0 -- vault login
 
 Path      Type     Accessor               Description                Version
@@ -74,7 +108,7 @@ Path      Type     Accessor               Description                Version
 token/    token    auth_token_be5b4bb1    token based credentials    n/a
 ```
 
-```
+```bash
 kubectl exec -it vault-0 -- vault read otus/otus-ro/config
 
 Key                 Value
@@ -84,7 +118,7 @@ password            asajkjkahs
 username            otus
 ```
 
-```
+```bash
 kubectl exec -it vault-0 -- vault kv get otus/otus-rw/config
 
 ====== Data ======
@@ -94,7 +128,7 @@ password    asajkjkahs
 username    otus
 ```
 
-```
+```bash
 kubectl exec -it vault-0 -- vault auth list
 
 Path           Type          Accessor                    Description                Version
@@ -103,13 +137,13 @@ kubernetes/    kubernetes    auth_kubernetes_1feb11b1    n/a                    
 token/         token         auth_token_be5b4bb1         token based credentials    n/a
 ```
 
-```
+```bash
 Почему мы смогли записать otus-rw/config1 но не смогли otusrw/config?
 
 Не хватало update capability в политике для пути otus/otus-rw/*"
 ```
 
-```
+```bash
 kubectl exec -it vault-0 -- vault write pki_int/issue/example-dot-ru common_name="gitlab.example.ru" ttl="24h"
 
 Key                 Value
@@ -230,7 +264,7 @@ private_key_type    rsa
 serial_number       05:e3:52:3a:5d:98:7b:c4:d2:74:97:c5:ed:d7:bf:58:04:50:27:83
 ```
 
-```
+```bash
 kubectl exec -it vault-0 -- vault write pki_int/revoke serial_number="05:e3:52:3a:5d:98:7b:c4:d2:74:97:c5:ed:d7:bf:58:04:50:27:83"
 
 Key                        Value
@@ -239,9 +273,9 @@ revocation_time            1674984309
 revocation_time_rfc3339    2023-01-29T09:25:09.202364005Z
 ```
 
-# ДЗ №07 Monitoring
+## ДЗ №07 Monitoring
 
-```
+```bash
 cd kubernetes-monitoring/
 helm install test-app test-app/
 helm repo add nexclipper https://nexclipper.github.io/helm-charts
@@ -250,14 +284,13 @@ for i in {0..2}; do helm install nginx-exporter$i nexclipper/nginx-exporter --na
 
 ```
 
+## ДЗ №06 Templating
 
-# ДЗ №06 Templating
+Работы выполнялись в managed service for kubernetes 1.22 by yandex
 
-Работы выполнялись в managed service for kubernetes 1.22 by yandex 
+### nginx-ingress
 
-## nginx-ingress
-
-```
+```bash
 kubectl create ns nginx-ingress
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm install ingress-nginx ingress-nginx/ingress-nginx -n nginx-ingress
@@ -265,37 +298,39 @@ helm install ingress-nginx ingress-nginx/ingress-nginx -n nginx-ingress
 
 Проверяем, что external ip нарисовался и идем дальше
 
-## cert-manager
+### cert-manager
 
 Древне говно мамонта из презентации на свежем кубике не взлетело, поэтому установил все более-менее свежее + дополнил созданием cluster issuer
 
-```
+```bash
 cd kubernetes-templating/cert-manager/
 kubectl apply -f cert-manager.crds.yaml 
 kubectl apply -f cert-manager.yaml 
 kubectl apply -f cluster-issuer.yaml
 ```
 
-## chartmuseum
+### chartmuseum
 
 Chartmuseum из методички также уже deprecated, поэтому был взят из другого chart репозитория и также более свежий
 
-```
+```bash
 cd kubernetes-templating/chartmuseum/
 helm repo add chartmuseum https://chartmuseum.github.io/charts
 helm install chartmuseum chartmuseum/chartmuseum --wait --namespace=chartmuseum --version 3.1.0 -f values.yaml
 ```
 
-## harbor
+### harbor
 
-```
+```bash
 cd kubernetes-templating/harbor/
 kubernetes-templating/chartmuseum/
 helm upgrade  --install harbor harbor/harbor --wait -f values.yaml
 ```
 
-## Мучаем hipster-shop
+### Мучаем hipster-shop
+
 В последней итерации хипстеркого магазина весь деплой попилен на 4 блока:
+
 - сам hipster-shop деплой, а точнее то, что от него осталось
 - шаблонизированный через хемл frontend деплой подтягивается как dependencies через chart.yaml
 - шаблонизированный через kubecfg сервисы paymentservice и shippingservice
@@ -303,7 +338,7 @@ helm upgrade  --install harbor harbor/harbor --wait -f values.yaml
 
 Кастомизация через kubecfg из методички не взлетела, т.к. библиотеки не рабочие. Пришлось завезти библиотеку локально, поправить её и подключить
 
-```
+```bash
 cd kubernetes-templating/
 kubectl create ns hipster-shop
 helm upgrade --install hipster-shop hipster-shop --namespace hipster-shop
